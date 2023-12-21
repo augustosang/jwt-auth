@@ -23,4 +23,9 @@ public class Product {
   private String name;
 
   private Integer price;
+
+  public Product(ProductRequestDto productRequestDto) {
+    this.name = productRequestDto.name();
+    this.price = productRequestDto.price();
+  }
 }
