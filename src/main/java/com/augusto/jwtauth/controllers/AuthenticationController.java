@@ -1,8 +1,10 @@
 package com.augusto.jwtauth.controllers;
 
 import com.augusto.jwtauth.domain.user.AuthenticationDto;
+import com.augusto.jwtauth.domain.user.LoginResponseDto;
 import com.augusto.jwtauth.domain.user.User;
 import com.augusto.jwtauth.domain.user.UserRegisterDto;
+import com.augusto.jwtauth.infra.security.TokenService;
 import com.augusto.jwtauth.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +28,17 @@ public class AuthenticationController {
   @Autowired
   private UserRepository userRepository;
 
+  @Autowired
+  TokenService tokenService;
+
   @PostMapping("/login")
   public ResponseEntity login(@RequestBody @Valid AuthenticationDto data) {
     var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
     var auth = this.authenticationManager.authenticate(usernamePassword);
 
-    return ResponseEntity.ok().build();
+    var token = tokenService.generateToken((User) auth.getPrincipal());
+
+    return ResponseEntity.ok(new LoginResponseDto(token));
   }
 
   @PostMapping("/register")
@@ -43,6 +50,6 @@ public class AuthenticationController {
 
     this.userRepository.save(newUser);
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 }
