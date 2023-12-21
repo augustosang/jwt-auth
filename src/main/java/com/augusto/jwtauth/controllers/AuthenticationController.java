@@ -43,6 +43,6 @@ public class AuthenticationController {
 
     this.userRepository.save(newUser);
 
-    ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
   }
 }
